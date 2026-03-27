@@ -1,111 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Status - Chill n Fill</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Sarabun', sans-serif; background: #f6efe5; color: #5e3b24; }
-    .status-badge { transition: all 0.3s ease; }
-    /* สีตามที่น้องต้องการ */
-    .bg-pending { background-color: #3abff8 !important; color: white; } /* สีฟ้า */
-    .bg-cooking { background-color: #fbbd23 !important; color: white; } /* สีเหลือง */
-    .bg-served { background-color: #36d399 !important; color: white; }  /* สีเขียว */
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Status - Chill n Fill</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background: #f6efe5; color: #5e3b24; padding: 20px; }
+        .order-card { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .status-badge { background: #3abff8; color: white; padding: 8px 20px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; }
+        .cooking { background: #fbbd23 !important; }
+        .served { background: #36d399 !important; }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6">
-  
-  <div class="max-w-md w-full bg-[#fff7ee] rounded-3xl shadow-xl p-8 border border-[#7a4e2f]/20 mt-10">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-extrabold text-[#7a4e2f]">Track Your Order</h1>
-      <p class="text-sm opacity-70">Order ID: #CNF-2026</p>
+<body class="flex flex-col items-center">
+    <header class="w-full max-w-2xl flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-extrabold text-[#7a4e2f]">Chill n Fill Status</h1>
+        <div class="bg-white/50 px-4 py-1 rounded-full text-sm font-bold">Table #1</div>
+    </header>
+
+    <main class="w-full max-w-2xl" id="statusContainer">
+        <div class="text-center opacity-50 py-20">Waiting for your order...</div>
+    </main>
+
+    <div class="w-full max-w-2xl mt-10 p-6 bg-white/30 rounded-3xl border border-dashed border-[#7a4e2f]/20 text-center">
+        <p class="text-xs font-bold mb-4 opacity-60 uppercase">Chef Control Panel (Simulation)</p>
+        <div class="flex justify-center gap-4">
+            <button onclick="updateAll('PENDING')" class="btn btn-sm btn-info text-white">Pending</button>
+            <button onclick="updateAll('COOKING')" class="btn btn-sm btn-warning text-white">Cooking</button>
+            <button onclick="updateAll('SERVED')" class="btn btn-sm btn-success text-white">Served</button>
+        </div>
     </div>
 
-    <div id="statusBox" class="status-badge bg-pending text-center py-4 rounded-2xl mb-8 font-bold text-xl shadow-md">
-      PENDING
-    </div>
-
-    <div class="divider uppercase text-xs font-bold opacity-50">Order Details</div>
-    
-    <div id="orderItems" class="space-y-4 mb-6 max-h-60 overflow-y-auto">
-      <p class="text-center opacity-50 italic">No items found.</p>
-    </div>
-
-    <div class="divider"></div>
-    
-    <div class="flex justify-between font-bold text-lg text-[#7a4e2f]">
-      <span>Total</span>
-      <span id="totalPrice">0 Bath</span>
-    </div>
-  </div>
-
-  <div class="mt-10 p-4 bg-white/50 rounded-2xl border border-dashed border-[#7a4e2f]/30 text-center">
-    <p class="text-xs font-bold mb-3 opacity-60">CHEF CONTROLS (SIMULATION)</p>
-    <div class="flex gap-2">
-      <button onclick="updateStatus('PENDING')" class="btn btn-sm btn-info text-white">Set Pending</button>
-      <button onclick="updateStatus('COOKING')" class="btn btn-sm btn-warning text-white">Start Cooking</button>
-      <button onclick="updateStatus('SERVED')" class="btn btn-sm btn-success text-white">Served</button>
-    </div>
-  </div>
-
-<script>
-function renderOrders() {
-    const orderListContainer = document.getElementById('orderList');
-    const totalPriceElement = document.getElementById('totalPrice');
-    
-    // 1. ดึงข้อมูลที่ลูกค้าสั่งมาจากเครื่อง (localStorage)
-    const savedOrder = localStorage.getItem('currentOrder');
-    
-    if (!savedOrder || JSON.parse(savedOrder).length === 0) {
-        orderListContainer.classList.add('empty');
-        orderListContainer.innerHTML = `
-            <div class="empty-state">
-                <p>No Orders yet</p>
-                <span>Click the Button to Order</span>
-            </div>`;
-        totalPriceElement.innerText = "0 Bath";
-        return;
-    }
-
-    const cart = JSON.parse(savedOrder);
-    orderListContainer.classList.remove('empty');
-    
-    // 2. วาดรายการอาหาร พร้อม (สถานะ) ไว้ข้างหลั
-    orderListContainer.innerHTML = cart.map(item => {
-        const itemQty = item.quantity || item.qty || 1;
-        
-        
-        const statusText = "Pending"; 
-
-        return `
-            <div class="order-card" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow);">
-                <div class="order-card-left" style="display: flex; align-items: center; gap: 14px;">
-                    <img src="${item.img || 'img/food-placeholder.jpg'}" class="order-thumb" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
-                    <div>
-                        <div class="order-name" style="font-weight: 700;">${item.name}</div>
-                        <div class="order-price" style="color: var(--muted); font-size: 0.9rem;">${item.price} Bath x ${itemQty}</div>
+    <script>
+        function renderStatus() {
+            const data = localStorage.getItem('currentOrder');
+            const container = document.getElementById('statusContainer');
+            if (data) {
+                const cart = JSON.parse(data);
+                container.innerHTML = cart.map(item => `
+                    <div class="order-card">
+                        <div style="text-align: left;">
+                            <h3 class="font-extrabold text-lg">${item.name} <span class="text-[#b07a53] ml-2">x ${item.quantity}</span></h3>
+                            <p class="text-sm text-[#b07a53]">🌶️ ${item.optionsText}</p>
+                        </div>
+                        <div>
+                            <span class="status-badge">PENDING</span>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="order-status" style="display: flex; align-items: center;">
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #3abff8; background: rgba(58, 191, 248, 0.1); padding: 4px 12px; border-radius: 20px;">
-                        (${statusText})
-                    </span>
-                </div>
-            </div>
-        `;
-    }).join('');
+                `).join('');
+            }
+        }
 
+        function updateAll(status) {
+            const badges = document.querySelectorAll('.status-badge');
+            badges.forEach(b => {
+                b.innerText = status;
+                b.classList.remove('cooking', 'served');
+                if(status === 'COOKING') b.classList.add('cooking');
+                if(status === 'SERVED') b.classList.add('served');
+            });
+        }
 
-    const total = cart.reduce((sum, item) => sum + (item.price * (item.quantity || item.qty || 1)), 0);
-    totalPriceElement.innerText = `${total} Bath`;
-}
-
-// สั่งให้ทำงานทันทีที่เปิดหน้านี้ขึ้นมา
-window.onload = renderOrders;
-</script>
+        window.onload = renderStatus;
+    </script>
 </body>
 </html>
