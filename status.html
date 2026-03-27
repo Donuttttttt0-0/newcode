@@ -1,69 +1,272 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Status - Chill n Fill</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; background: #f6efe5; color: #5e3b24; padding: 20px; }
-        .order-card { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .status-badge { background: #3abff8; color: white; padding: 8px 20px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; }
-        .cooking { background: #fbbd23 !important; }
-        .served { background: #36d399 !important; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chill n Fill - Order Status</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6efe5;
+      --bg-soft: #efe3d2;
+      --text: #5e3b24;
+      --muted: #b07a53;
+      --blue: #b07a53;
+      --blue-strong: #7a4e2f;
+      --border: rgba(122, 78, 47, 0.2);
+      --shadow: 0 12px 30px rgba(94, 59, 36, 0.18);
+    }
+
+    body {
+      font-family: "Sarabun", sans-serif;
+      background: linear-gradient(135deg, var(--bg), var(--bg-soft));
+      color: var(--text);
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* Top Bar */
+    .topbar {
+      height: 72px;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px;
+      color: #fff7ee;
+    }
+
+    .brand { font-size: 1.6rem; font-weight: 800; }
+
+    /* Main Content */
+    .content { padding: 40px 20px 180px; max-width: 1200px; margin: 0 auto; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .section-title h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--blue-strong);
+    }
+
+    /* Order Table Container */
+    .order-container {
+      background: rgba(255, 247, 238, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden; /* ให้ขอบมนตัดตาราง */
+      min-height: 300px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    
+    thead { background: rgba(122, 78, 47, 0.05); }
+    
+    th {
+      padding: 18px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(122, 78, 47, 0.1);
+      vertical-align: middle;
+    }
+
+    tr:hover { background: rgba(255, 255, 255, 0.4); }
+
+    .food-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status-preparing { background: #fef3c7; color: #92400e; }
+    .status-ready { background: #d1fae5; color: #065f46; }
+
+    /* Bottom Panel */
+    .bottom-panel {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(246, 239, 229, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .price-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--blue-strong);
+    }
+
+    .order-btn {
+      width: 100%;
+      background: var(--blue-strong);
+      color: white;
+      padding: 16px;
+      border-radius: 15px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 15px rgba(122, 78, 47, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 60px;
+      text-align: center;
+      color: var(--muted);
+    }
+  </style>
 </head>
-<body class="flex flex-col items-center">
-    <header class="w-full max-w-2xl flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-extrabold text-[#7a4e2f]">Chill n Fill Status</h1>
-        <div class="bg-white/50 px-4 py-1 rounded-full text-sm font-bold">Table #1</div>
-    </header>
+<body>
 
-    <main class="w-full max-w-2xl" id="statusContainer">
-        <div class="text-center opacity-50 py-20">Waiting for your order...</div>
-    </main>
+  <header class="topbar">
+    <div class="brand">Chill n Fill</div>
+    <div class="flex items-center gap-3">
+      <div class="badge badge-outline border-white text-white p-4 font-bold">Table 1</div>
+    </div>
+  </header>
 
-    <div class="w-full max-w-2xl mt-10 p-6 bg-white/30 rounded-3xl border border-dashed border-[#7a4e2f]/20 text-center">
-        <p class="text-xs font-bold mb-4 opacity-60 uppercase">Chef Control Panel (Simulation)</p>
-        <div class="flex justify-center gap-4">
-            <button onclick="updateAll('PENDING')" class="btn btn-sm btn-info text-white">Pending</button>
-            <button onclick="updateAll('COOKING')" class="btn btn-sm btn-warning text-white">Cooking</button>
-            <button onclick="updateAll('SERVED')" class="btn btn-sm btn-success text-white">Served</button>
-        </div>
+  <main class="content">
+    <div class="section-title">
+      <span class="text-3xl">🍴</span>
+      <h2>Orders</h2>
     </div>
 
-    <script>
-        function renderStatus() {
-            const data = localStorage.getItem('currentOrder');
-            const container = document.getElementById('statusContainer');
-            if (data) {
-                const cart = JSON.parse(data);
-                container.innerHTML = cart.map(item => `
-                    <div class="order-card">
-                        <div style="text-align: left;">
-                            <h3 class="font-extrabold text-lg">${item.name} <span class="text-[#b07a53] ml-2">x ${item.quantity}</span></h3>
-                            <p class="text-sm text-[#b07a53]">🌶️ ${item.optionsText}</p>
-                        </div>
-                        <div>
-                            <span class="status-badge">PENDING</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
+    <div class="order-container">
+      <table id="orderTable">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Menu Item</th>
+            <th class="text-center">Qty</th>
+            <th>Notes</th>
+            <th>Status</th>
+            <th class="text-right">Price</th>
+          </tr>
+        </thead>
+        <tbody id="orderBody">
+          </tbody>
+      </table>
+      <div id="emptyMsg" class="empty-state hidden">
+        <p class="text-xl font-bold">No orders yet...</p>
+        <span>Please select your menu from the bottom button.</span>
+      </div>
+    </div>
+  </main>
 
-        function updateAll(status) {
-            const badges = document.querySelectorAll('.status-badge');
-            badges.forEach(b => {
-                b.innerText = status;
-                b.classList.remove('cooking', 'served');
-                if(status === 'COOKING') b.classList.add('cooking');
-                if(status === 'SERVED') b.classList.add('served');
-            });
-        }
+  <footer class="bottom-panel">
+    <div class="price-row">
+      <span class="text-xl font-bold text-muted">Total Details</span>
+      <div>
+        <span class="text-lg text-muted mr-2">Price:</span>
+        <span id="totalPriceDisplay" class="price-value">0 Bath</span>
+      </div>
+    </div>
+    <button class="order-btn" onclick="alert('Menu function coming soon!')">
+      Add More Orders
+    </button>
+  </footer>
 
-        window.onload = renderStatus;
-    </script>
+  <script>
+    // 👑 ฟังก์ชันหัวใจสำคัญ: ดึงข้อมูลจาก localStorage มาวาดตาราง
+    function syncOrders() {
+      const orderBody = document.getElementById('orderBody');
+      const emptyMsg = document.getElementById('emptyMsg');
+      const orderTable = document.getElementById('orderTable');
+      const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+
+      // 1. ดึงข้อมูลที่ 'หน้า Admin' ส่งมาเก็บไว้ (Key: 'chill_orders')
+      const rawData = localStorage.getItem('chill_orders');
+      const orders = rawData ? JSON.parse(rawData) : [];
+
+      if (orders.length === 0) {
+        orderTable.classList.add('hidden');
+        emptyMsg.classList.remove('hidden');
+        totalPriceDisplay.innerText = "0 Bath";
+        return;
+      }
+
+      // 2. ถ้ามีข้อมูล ให้วาดตาราง
+      orderTable.classList.remove('hidden');
+      emptyMsg.classList.add('hidden');
+      
+      let html = "";
+      let total = 0;
+
+      orders.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        // กำหนดสี Status ตามสถานะ
+        let statusClass = item.status === 'Ready to Serve' ? 'status-ready' : 'status-preparing';
+
+        html += `
+          <tr>
+            <td class="font-mono text-sm opacity-60">#${item.id}</td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="${item.img || 'https://via.placeholder.com/50'}" class="food-img">
+                <span class="font-bold">${item.name}</span>
+              </div>
+            </td>
+            <td class="text-center font-bold">${item.quantity}</td>
+            <td class="text-sm italic text-muted">${item.note || '-'}</td>
+            <td>
+              <span class="status-badge ${statusClass}">${item.status}</span>
+            </td>
+            <td class="text-right font-bold text-lg text-blue-strong">${itemTotal} Bath</td>
+          </tr>
+        `;
+      });
+
+      orderBody.innerHTML = html;
+      totalPriceDisplay.innerText = total + " Bath";
+    }
+
+    // 🏆 สั่งให้หน้าจอนี้อัปเดต "ทันที" เมื่อหน้าอื่นเปลี่ยนข้อมูล
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'chill_orders') {
+        syncOrders();
+      }
+    });
+
+    // เรียกครั้งแรกเมื่อโหลดหน้า
+    document.addEventListener('DOMContentLoaded', syncOrders);
+
+    // 💡 วิธีทดสอบ: 
+    // ลองเปิด Console (F12) แล้ววางโค้ดนี้เพื่อจำลองข้อมูลจากหน้าอื่น:
+    // localStorage.setItem('chill_orders', JSON.stringify([{id:'0709224', name:'Massaman Curry', quantity:2, price:50, status:'Preparing', note:'Medium Spicy', img:''}]));
+  </script>
 </body>
 </html>
