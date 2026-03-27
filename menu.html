@@ -1,184 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Chill n Fill – Food Menu</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f6efe5; font-family: system-ui, sans-serif; color: #5e3b24; padding: 20px 16px 40px; }
-        :root { --chill-cream: #f6efe5; --chill-brown: #7a4e2f; --chill-brown-dark: #5e3b24; --chill-accent: #b07a53; --chill-border: #dcc9b4; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .shop-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--chill-border); }
-        .shop-name { font-size: 1.7rem; font-weight: 700; color: var(--chill-brown-dark); }
-        .shop-badge { font-size: 0.8rem; background: #efe3d2; padding: 4px 12px; border-radius: 40px; color: var(--chill-brown); font-weight: 500; }
-        .category-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0 16px; margin-bottom: 12px; }
-        .cat-btn { background: #fff7ee; border: 1px solid var(--chill-border); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; color: var(--chill-brown); cursor: pointer; }
-        .cat-btn.active { background: var(--chill-brown); border-color: var(--chill-brown); color: white; }
-        .menu-grid { display: flex; flex-direction: column; gap: 16px; }
-        .menu-card { background: #fff7ee; border-radius: 28px; border: 1px solid var(--chill-border); padding: 16px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-        .menu-row { display: flex; justify-content: space-between; align-items: center; }
-        .price { font-weight: 800; font-size: 1.3rem; color: var(--chill-brown); }
-        .order-btn { background: var(--chill-brown); border: none; padding: 8px 20px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer; }
-        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 247, 238, 0.96); border-top: 2px solid var(--chill-border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .view-cart-btn { background: var(--chill-brown); padding: 8px 24px; border-radius: 60px; color: white; font-weight: bold; border: none; cursor: pointer; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
-        .modal-card { background: #fff7ee; width: 90%; max-width: 500px; border-radius: 36px; padding: 24px 20px; max-height: 80vh; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--chill-border); }
-        .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--chill-border); background: white; cursor: pointer; }
-        .options-panel { margin-top: 10px; display: none; flex-direction: column; gap: 10px; padding: 10px; background: #fffaf5; border-radius: 15px; }
-        .options-panel.show { display: flex; }
-        .opt-choice { padding: 5px 12px; border: 1px solid var(--chill-border); border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-right: 5px; }
-        .opt-choice.selected { background: var(--chill-accent); color: white; border-color: var(--chill-accent); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chill n Fill - Customer Menu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6efe5; --bg-soft: #efe3d2; --text: #5e3b24;
+      --muted: #b07a53; --blue: #b07a53; --blue-strong: #7a4e2f;
+      --border: rgba(122, 78, 47, 0.2); --card: #fff7ee;
+    }
+    body { font-family: "Sarabun", sans-serif; background: linear-gradient(135deg, var(--bg), var(--bg-soft)); color: var(--text); min-height: 100vh; }
+    .topbar { height: 72px; background: var(--blue); display: flex; align-items: center; justify-content: space-between; padding: 0 26px; color: #fff7ee; }
+    .content { flex: 1; padding: 26px 20px 180px; }
+    .order-list { width: 100%; max-width: 1100px; min-height: 420px; border-radius: 18px; padding: 20px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border); }
+    .order-card { background: rgba(255, 255, 255, 0.7); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .order-thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); }
+    .bottom-panel { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 12px 12px; background: rgba(246, 239, 229, 0.98); backdrop-filter: blur(10px); border-top: 1px solid var(--border); }
+    .order-btn { width: 100%; height: 58px; border: none; border-radius: 14px; background: linear-gradient(180deg, var(--blue) 0%, var(--blue-strong) 100%); color: #fff7ee; font-size: 1.2rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .qty-btn { background: var(--bg-soft); color: var(--text); width: 34px; height: 34px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
+    .menu-card { border: 1px solid var(--border); background: rgba(255, 255, 255, 0.7); border-radius: 16px; overflow: hidden; cursor: pointer; text-align: left; transition: 0.2s; }
+    .menu-card:active { transform: scale(0.95); }
+    .menu-card img { width: 100%; height: 140px; object-fit: cover; }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="shop-header">
-        <div class="shop-name">Chill n Fill</div>
-        <div class="shop-badge">24h Delivery</div>
-    </div>
-    <div class="category-scroll" id="categoryBar">
-        <button class="cat-btn active" data-cat="all">All</button>
-        <button class="cat-btn" data-cat="Main Course">Main Course</button>
-        <button class="cat-btn" data-cat="Soup">Soup</button>
-        <button class="cat-btn" data-cat="Salad">Salad</button>
-        <button class="cat-btn" data-cat="Drinks">Drinks</button>
-    </div>
-    <div id="menuGrid" class="menu-grid"></div>
-    <div style="height: 80px;"></div>
-</div>
+  <div class="app">
+    <header class="topbar">
+      <div class="text-xl font-bold">Chill n Fill</div>
+      <div class="bg-white/20 px-4 py-1 rounded-full font-bold">Table 1</div>
+    </header>
 
-<div class="cart-bar">
-    <div>🛒 Cart: <span id="cartCount">0</span></div>
-    <div id="cartTotalPrice" style="font-weight: 800;">0 THB</div>
-    <button class="view-cart-btn" id="openCartModal">View Cart</button>
-</div>
+    <main class="content">
+      <div class="flex items-center gap-3 mb-6 justify-center">
+        <span class="text-2xl">🍴</span>
+        <h2 class="text-2xl font-extrabold text-[#7a4e2f]">Orders</h2>
+      </div>
 
-<div id="cartModal" class="modal">
-    <div class="modal-card">
-        <h2 style="margin-bottom: 15px;">Your Order</h2>
-        <div id="cartItemsContainer"></div>
-        <div style="text-align: right; font-weight: 800; padding: 15px 0; font-size: 1.2rem;">Total: <span id="modalTotalPrice">0</span> THB</div>
-        <div style="display: flex; gap: 10px;">
-            <button id="closeModalBtn" style="flex: 1; padding: 12px; border-radius: 40px; border: 1px solid #7a4e2f;">Close</button>
-            <button id="fakeOrderBtn" style="flex: 2; padding: 12px; border-radius: 40px; background: #7a4e2f; color: white; border: none; font-weight: bold;">Place Order</button>
+      <div id="cartDisplay" class="order-list flex flex-col items-center justify-center">
+        <div class="text-center opacity-50">
+          <p class="font-bold">No Order Yet</p>
+          <span>Click the Button to order</span>
         </div>
-    </div>
-</div>
+      </div>
+    </main>
 
-<script>
-    const menuDatabase = [
-        { id: 1, name: "Basil Stir-Fry", price: 65, category: "Main Course", desc: "Crispy chicken with basil and egg", hasOptions: true },
-        { id: 2, name: "Tom Yum Goong", price: 120, category: "Soup", desc: "Spicy shrimp soup", hasOptions: true },
-        { id: 3, name: "Pad Thai", price: 70, category: "Main Course", desc: "Thai noodles with shrimp", hasOptions: false },
-        { id: 4, name: "Chicken Rice", price: 60, category: "Main Course", desc: "Steamed chicken with rice", hasOptions: false },
-        { id: 5, name: "Som Tum", price: 55, category: "Salad", desc: "Spicy papaya salad", hasOptions: true },
-        { id: 8, name: "Lime Juice", price: 25, category: "Drinks", desc: "Fresh lime juice", hasOptions: false }
-    ];
+    <footer class="bottom-panel">
+      <div class="flex justify-between items-center mb-3 px-2">
+        <span class="font-bold text-[#7a4e2f]">Details</span>
+        <div class="text-right">
+          <span class="text-sm opacity-60">Price</span>
+          <span id="totalPriceDisplay" class="text-3xl font-black text-[#7a4e2f] block">0 Bath</span>
+        </div>
+      </div>
+      <button id="actionBtn" class="order-btn" onclick="handleAction()">
+        <span>Orders</span>
+      </button>
+    </footer>
 
+    <dialog id="menuModal" class="modal">
+      <div class="modal-box bg-[#f6efe5] border-2 border-[#7a4e2f]/20">
+        <h3 class="font-black text-xl mb-4 text-[#7a4e2f]">Select Menu</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="menu-card" onclick="addToCart('Fried Chicken', 60, 'https://cdn-icons-png.flaticon.com/512/1865/1865961.png')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1865/1865961.png">
+            <div class="p-3"><b>Fried Chicken</b><br><small>60 Bath</small></div>
+          </div>
+          <div class="menu-card" onclick="addToCart('Fried Rice', 40, 'https://cdn-icons-png.flaticon.com/512/3014/3014510.png')">
+            <img src="https://cdn-icons-png.flaticon.com/512/3014/3014510.png">
+            <div class="p-3"><b>Fried Rice</b><br><small>40 Bath</small></div>
+          </div>
+          <div class="menu-card" onclick="addToCart('Fried Egg', 15, 'https://cdn-icons-png.flaticon.com/512/837/837624.png')">
+            <img src="https://cdn-icons-png.flaticon.com/512/837/837624.png">
+            <div class="p-3"><b>Fried Egg</b><br><small>15 Bath</small></div>
+          </div>
+          <div class="menu-card" onclick="addToCart('Water', 10, 'https://cdn-icons-png.flaticon.com/512/3100/3100566.png')">
+            <img src="https://cdn-icons-png.flaticon.com/512/3100/3100566.png">
+            <div class="p-3"><b>Water</b><br><small>10 Bath</small></div>
+          </div>
+        </div>
+        <div class="modal-action">
+          <form method="dialog"><button class="btn">Close</button></form>
+        </div>
+      </div>
+    </dialog>
+  </div>
+
+  <script>
     let cart = [];
 
-    function updateCartUI() {
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        document.getElementById('cartCount').innerText = totalItems;
-        document.getElementById('cartTotalPrice').innerText = totalPrice + " THB";
-        const container = document.getElementById('cartItemsContainer');
-        container.innerHTML = cart.length === 0 ? "Empty Cart" : cart.map(item => `
-            <div class="cart-item">
-                <div style="flex:2"><strong>${item.name}</strong><br><small>${item.optionsText}</small></div>
-                <div style="flex:1; display:flex; gap:10px; align-items:center;">
-                    <button class="qty-btn" onclick="changeQty('${item.cartId}', -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="qty-btn" onclick="changeQty('${item.cartId}', 1)">+</button>
-                </div>
-                <div style="flex:1; text-align:right;">${item.price * item.quantity}</div>
+    // ฟังก์ชันจัดการปุ่มหลัก
+    function handleAction() {
+      if (cart.length === 0) {
+        document.getElementById('menuModal').showModal();
+      } else {
+        if(confirm("Confirm your order?")) {
+          localStorage.setItem('currentOrder', JSON.stringify(cart));
+          window.location.href = "status.html"; // เด้งไปหน้า Status
+        }
+      }
+    }
+
+    // เพิ่มของลงตะกร้า (ถ้าซ้ำให้เพิ่มจำนวน)
+    function addToCart(name, price, img) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price, img, qty: 1 });
+      }
+      document.getElementById('menuModal').close();
+      renderCart();
+    }
+
+    // บวก-ลด จำนวนในตะกร้า
+    function changeQty(name, delta) {
+      const item = cart.find(i => i.name === name);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) cart = cart.filter(i => i.name !== name);
+      }
+      renderCart();
+    }
+
+    // วาดหน้าจอใหม่
+    function renderCart() {
+      const display = document.getElementById('cartDisplay');
+      const totalDisplay = document.getElementById('totalPriceDisplay');
+      const actionBtn = document.getElementById('actionBtn');
+
+      if (cart.length === 0) {
+        display.innerHTML = `<div class="text-center opacity-50"><p class="font-bold">No Order Yet</p><span>Click the Button to order</span></div>`;
+        display.classList.add('justify-center');
+        totalDisplay.innerText = "0 Bath";
+        actionBtn.innerHTML = "<span>Orders</span>";
+        return;
+      }
+
+      display.classList.remove('justify-center');
+      display.innerHTML = cart.map(item => `
+        <div class="order-card w-full">
+          <div class="flex items-center gap-4">
+            <img src="${item.img}" class="order-thumb">
+            <div>
+              <div class="order-name">${item.name}</div>
+              <div class="order-price">${item.price} Bath</div>
             </div>
-        `).join('');
-        document.getElementById('modalTotalPrice').innerText = totalPrice;
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="qty-btn" onclick="changeQty('${item.name}', -1)">-</button>
+            <span class="font-bold">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.name}', 1)">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      totalDisplay.innerText = `${total} Bath`;
+      actionBtn.innerHTML = "<span>Confirm Order</span>";
     }
-
-    function changeQty(id, delta) {
-        const item = cart.find(i => i.cartId === id);
-        if (item) {
-            item.quantity += delta;
-            if (item.quantity <= 0) cart = cart.filter(i => i.cartId !== id);
-            updateCartUI();
-        }
-    }
-
-    function addToCart(menuItem, spicy = "Medium") {
-        const optText = menuItem.hasOptions ? "Spiciness: " + spicy : "Standard";
-        const cartId = `${menuItem.id}-${optText}`;
-        const existing = cart.find(i => i.cartId === cartId);
-        if (existing) existing.quantity += 1;
-        else cart.push({ cartId, name: menuItem.name, price: menuItem.price, optionsText: optText, quantity: 1 });
-        updateCartUI();
-    }
-
-    function showOptions(menuItem, card) {
-        let panel = card.querySelector('.options-panel');
-        if(!panel) {
-            panel = document.createElement('div');
-            panel.className = 'options-panel';
-            panel.innerHTML = `
-                <span style="font-size:0.8rem; font-weight:bold;">🌶️ Select Spicy Level</span>
-                <div style="display:flex;">
-                    <span class="opt-choice" data-v="Mild">Mild</span>
-                    <span class="opt-choice selected" data-v="Medium">Medium</span>
-                    <span class="opt-choice" data-v="Hot">Hot</span>
-                </div>
-                <button onclick="confirmAndAdd(${menuItem.id}, this)" style="background:#7a4e2f; color:white; border:none; padding:5px; border-radius:10px; margin-top:5px; cursor:pointer;">Add to Cart</button>
-            `;
-            card.appendChild(panel);
-            panel.querySelectorAll('.opt-choice').forEach(btn => btn.onclick = () => {
-                panel.querySelectorAll('.opt-choice').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-            });
-        }
-        panel.classList.toggle('show');
-    }
-
-    window.confirmAndAdd = (id, btn) => {
-        const m = menuDatabase.find(x => x.id === id);
-        const s = btn.parentElement.querySelector('.selected').dataset.v;
-        addToCart(m, s);
-        btn.parentElement.classList.remove('show');
-    };
-
-    function renderMenu(cat = "all") {
-        const grid = document.getElementById('menuGrid');
-        grid.innerHTML = "";
-        const filtered = cat === "all" ? menuDatabase : menuDatabase.filter(m => m.category === cat);
-        filtered.forEach(m => {
-            const card = document.createElement('div');
-            card.className = 'menu-card';
-            card.innerHTML = `
-                <div class="menu-row">
-                    <div><h3>${m.name}</h3><small style="color:#b07a53;">${m.desc}</small></div>
-                    <div class="price">${m.price}</div>
-                    <button class="order-btn" onclick='handleOrderClick(${JSON.stringify(m)}, this)'>Order</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    }
-
-    window.handleOrderClick = (m, btn) => {
-        if(m.hasOptions) showOptions(m, btn.closest('.menu-card'));
-        else addToCart(m);
-    };
-
-    document.getElementById('openCartModal').onclick = () => document.getElementById('cartModal').style.display='flex';
-    document.getElementById('closeModalBtn').onclick = () => document.getElementById('cartModal').style.display='none';
-    document.getElementById('fakeOrderBtn').onclick = () => {
-        if(cart.length === 0) return alert("Please add items!");
-        localStorage.setItem('currentOrder', JSON.stringify(cart));
-        window.location.href = "status.html";
-    };
-
-    renderMenu();
-</script>
+  </script>
 </body>
 </html>
