@@ -383,12 +383,14 @@
 
     function showToast(msg) {
         const toast = document.getElementById('toastMsg');
-        toast.innerText = msg;
-        toast.style.opacity = '1';
-        setTimeout(() => toast.style.opacity = '0', 1800);
+        if (toast) {
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 1800);
+        }
     }
 
-    // ฟังชั่นจัดการจำนวนสินค้า (บวก/ลบ)
+    // ฟังก์ชันจัดการจำนวนสินค้า (บวก/ลบ) ในตะกร้า
     function changeQuantity(cartId, delta) {
         const item = cart.find(i => i.cartId === cartId);
         if (item) {
@@ -407,31 +409,33 @@
         const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
         const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         
-        cartCountSpan.innerText = totalItems;
-        cartTotalSpan.innerText = totalPrice + " THB";
+        if (cartCountSpan) cartCountSpan.innerText = totalItems;
+        if (cartTotalSpan) cartTotalSpan.innerText = totalPrice + " THB";
         
         const modalContainer = document.getElementById('cartItemsContainer');
         const modalTotalSpan = document.getElementById('modalTotalPrice');
 
-        if(cart.length === 0) {
-            modalContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#7a4e2f;">Your cart is empty</div>';
-        } else {
-            modalContainer.innerHTML = cart.map(item => `
-                <div class="cart-item">
-                    <div style="flex: 2;">
-                        <strong>${item.name}</strong><br>
-                        <small style="color: #b07a53;">${item.optionsText}</small>
+        if (modalContainer) {
+            if (cart.length === 0) {
+                modalContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#7a4e2f;">Your cart is empty</div>';
+            } else {
+                modalContainer.innerHTML = cart.map(item => `
+                    <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #dcc9b4;">
+                        <div style="flex: 2;">
+                            <strong>${item.name}</strong><br>
+                            <small style="color: #b07a53;">${item.optionsText}</small>
+                        </div>
+                        <div class="qty-controls" style="flex: 1; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                            <button class="qty-btn" onclick="changeQuantity('${item.cartId}', -1)" style="width: 25px; height: 25px; border-radius: 50%; border: 1px solid #dcc9b4; cursor: pointer;">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="changeQuantity('${item.cartId}', 1)" style="width: 25px; height: 25px; border-radius: 50%; border: 1px solid #dcc9b4; cursor: pointer;">+</button>
+                        </div>
+                        <div style="flex: 1; text-align: right; font-weight: bold;">${item.price * item.quantity} THB</div>
                     </div>
-                    <div class="qty-controls" style="flex: 1;">
-                        <button class="qty-btn" onclick="changeQuantity('${item.cartId}', -1)">-</button>
-                        <span>${item.quantity}</span>
-                        <button class="qty-btn" onclick="changeQuantity('${item.cartId}', 1)">+</button>
-                    </div>
-                    <div style="flex: 1; text-align: right; font-weight: bold;">${item.price * item.quantity} THB</div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
-        modalTotalSpan.innerText = totalPrice;
+        if (modalTotalSpan) modalTotalSpan.innerText = totalPrice;
     }
 
     function addToCart(menuItem, selectedOptions = null) {
@@ -458,35 +462,41 @@
     function showOptionsForMenu(menuItem, cardElement) {
         document.querySelectorAll('.options-panel').forEach(panel => panel.classList.remove('show'));
         let targetPanel = cardElement.querySelector('.options-panel');
-        if(!targetPanel) {
+        if (!targetPanel) {
             targetPanel = document.createElement('div');
             targetPanel.classList.add('options-panel');
             targetPanel.innerHTML = `
-                <div class="opt-group">
-                    <span class="opt-label">🌶️ Spiciness Level</span>
-                    <div class="opt-buttons">
-                        <span class="opt-choice" data-spicy="Non-Spicy">None</span>
-                        <span class="opt-choice" data-spicy="Mild">Mild</span>
-                        <span class="opt-choice selected" data-spicy="Medium">Medium</span>
-                        <span class="opt-choice" data-spicy="Hot">Hot</span>
+                <div class="opt-group" style="background: #fffaf5; padding: 10px; border-radius: 10px; margin-top: 10px;">
+                    <span class="opt-label" style="font-weight: bold; font-size: 0.8rem; display: block; margin-bottom: 5px;">🌶️ Spiciness Level</span>
+                    <div class="opt-buttons" style="display: flex; gap: 5px;">
+                        <span class="opt-choice" data-spicy="Non-Spicy" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">None</span>
+                        <span class="opt-choice" data-spicy="Mild" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Mild</span>
+                        <span class="opt-choice selected" data-spicy="Medium" style="padding: 5px 10px; background: #b07a53; color: white; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Medium</span>
+                        <span class="opt-choice" data-spicy="Hot" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Hot</span>
                     </div>
                 </div>
-                <button class="confirm-options">Confirm + Add to Cart</button>
+                <button class="confirm-options" style="width: 100%; margin-top: 10px; padding: 8px; background: #efe3d2; border: none; border-radius: 20px; font-weight: bold; cursor: pointer;">Confirm + Add to Cart</button>
             `;
             cardElement.appendChild(targetPanel);
         }
         targetPanel.classList.add('show');
         
-        const spicyBtns = targetPanel.querySelectorAll('[data-spicy]');
+        const spicyBtns = targetPanel.querySelectorAll('.opt-choice');
         spicyBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                spicyBtns.forEach(b => b.classList.remove('selected'));
+                spicyBtns.forEach(b => {
+                    b.classList.remove('selected');
+                    b.style.background = 'white';
+                    b.style.color = '#5e3b24';
+                });
                 btn.classList.add('selected');
+                btn.style.background = '#b07a53';
+                btn.style.color = 'white';
             });
         });
         
         targetPanel.querySelector('.confirm-options').onclick = () => {
-            const finalSpicy = targetPanel.querySelector('[data-spicy].selected').getAttribute('data-spicy');
+            const finalSpicy = targetPanel.querySelector('.opt-choice.selected').getAttribute('data-spicy');
             addToCart(menuItem, { spicy: finalSpicy });
             targetPanel.classList.remove('show');
         };
@@ -494,19 +504,24 @@
 
     function renderMenu(category = "all") {
         const grid = document.getElementById('menuGrid');
+        if (!grid) return;
         const filtered = category === "all" ? menuDatabase : menuDatabase.filter(m => m.category === category);
         grid.innerHTML = "";
         filtered.forEach(menu => {
             const card = document.createElement('div');
             card.className = 'menu-card';
+            card.style.background = '#fff7ee';
+            card.style.padding = '15px';
+            card.style.borderRadius = '20px';
+            card.style.border = '1px solid #dcc9b4';
             card.innerHTML = `
-                <div class="menu-row">
+                <div class="menu-row" style="display: flex; justify-content: space-between; align-items: center;">
                     <div class="menu-info">
-                        <h3>${menu.name}</h3>
-                        <div class="menu-desc">${menu.desc}</div>
+                        <h3 style="margin: 0; color: #5e3b24;">${menu.name}</h3>
+                        <div class="menu-desc" style="font-size: 0.7rem; color: #b07a53;">${menu.desc}</div>
                     </div>
-                    <div class="price">${menu.price} THB</div>
-                    <button class="order-btn">Order Now</button>
+                    <div class="price" style="font-weight: bold; color: #7a4e2f;">${menu.price} THB</div>
+                    <button class="order-btn" style="padding: 8px 15px; background: #7a4e2f; color: white; border: none; border-radius: 20px; cursor: pointer;">Order Now</button>
                 </div>
             `;
             grid.appendChild(card);
@@ -518,27 +533,41 @@
     }
 
     const modal = document.getElementById('cartModal');
-    document.getElementById('openCartModal').onclick = () => { modal.style.display = 'flex'; updateCartUI(); };
-    document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
+    const openCartBtn = document.getElementById('openCartModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+
+    if (openCartBtn) openCartBtn.onclick = () => { modal.style.display = 'flex'; updateCartUI(); };
+    if (closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; };
     window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
 
-    document.getElementById('clearCartBtn').onclick = () => {
+    const clearBtn = document.getElementById('clearCartBtn');
+    if (clearBtn) clearBtn.onclick = () => {
         cart = [];
         updateCartUI();
         showToast("Cart cleared!");
     };
 
-    document.getElementById('fakeOrderBtn').onclick = () => {
-        if(cart.length === 0) return showToast("Please add items first!");
-        alert("Order placed successfully! Thank you.");
-        cart = [];
-        updateCartUI();
-        modal.style.display = 'none';
+    // ปุ่ม Confirm Order (Place Order) เพื่อเด้งไปหน้า Status
+    const fakeOrderBtn = document.getElementById('fakeOrderBtn');
+    if (fakeOrderBtn) fakeOrderBtn.onclick = () => {
+        if (cart.length === 0) return showToast("Please add items first!");
+        
+        const confirmPlace = confirm("Confirm your order?");
+        if (confirmPlace) {
+            // ล้างตะกร้า (จำลองว่าสั่งแล้ว)
+            cart = [];
+            updateCartUI();
+            modal.style.display = 'none';
+            
+            // เด้งไปหน้า status.html
+            window.location.href = "status.html";
+        }
     };
 
-    document.querySelectorAll('.cat-btn').forEach(btn => {
+    const catBtns = document.querySelectorAll('.cat-btn');
+    catBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            catBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderMenu(btn.getAttribute('data-cat'));
         });
