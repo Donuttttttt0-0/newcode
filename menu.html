@@ -548,21 +548,18 @@
     };
 
     // ปุ่ม Confirm Order (Place Order) เพื่อเด้งไปหน้า Status
-    const fakeOrderBtn = document.getElementById('fakeOrderBtn');
-    if (fakeOrderBtn) fakeOrderBtn.onclick = () => {
+   const fakeOrderBtn = document.getElementById('fakeOrderBtn');
+if (fakeOrderBtn) {
+    fakeOrderBtn.onclick = () => {
         if (cart.length === 0) return showToast("Please add items first!");
         
-        const confirmPlace = confirm("Confirm your order?");
-        if (confirmPlace) {
-            // ล้างตะกร้า (จำลองว่าสั่งแล้ว)
-            cart = [];
-            updateCartUI();
-            modal.style.display = 'none';
-            
-            
-            window.location.href = "status.html";
-        }
+        // บันทึกข้อมูลลงเครื่องเพื่อให้หน้า status รับไปโชว์ได้
+        localStorage.setItem('currentOrder', JSON.stringify(cart));
+        
+        // เด้งไปหน้าสถานะ (เช็กชื่อไฟล์น้องนะ ถ้าชื่อ customer.html ก็แก้ตรงนี้ด้วยค่ะ)
+        window.location.href = "status.html"; 
     };
+}
 
     const catBtns = document.querySelectorAll('.cat-btn');
     catBtns.forEach(btn => {
