@@ -51,10 +51,12 @@
     </div>
   </div>
 
-  <script>
+ <script>
     // ฟังก์ชันเปลี่ยนสถานะและสี
     function updateStatus(status) {
       const box = document.getElementById('statusBox');
+      if (!box) return;
+      
       box.innerText = status;
       
       // ลบสีเก่าออกให้หมด
@@ -66,29 +68,52 @@
       if (status === 'SERVED') box.classList.add('bg-served');
     }
 
-    // ดึงข้อมูลจาก localStorage มาโชว์
-    window.onload = function() {
+    // ฟังก์ชันดึงข้อมูลมาแสดงผล
+    function loadOrderData() {
+      // ดึงข้อมูลจาก localStorage (เช็กชื่อ key ให้ตรงกับหน้าเมนู)
       const data = localStorage.getItem('currentOrder');
+      
       if (data) {
         const cart = JSON.parse(data);
         const container = document.getElementById('orderItems');
+        const totalDisplay = document.getElementById('totalPrice');
+        
+        if (!container || !totalDisplay) return;
+
         let total = 0;
 
-        container.innerHTML = cart.map(item => {
-          total += (item.price * item.quantity);
-          return `
-            <div class="flex justify-between items-center text-sm">
-              <div>
-                <span class="font-bold">${item.name}</span>
-                <span class="opacity-60 text-xs">x${item.quantity}</span>
-              </div>
-              <span class="font-mono">${item.price * item.quantity} THB</span>
-            </div>
-          `;
-        }).join('');
+        if (cart.length > 0) {
+          container.innerHTML = cart.map(item => {
+            // ดักไว้ก่อน เผื่อบางหน้าใช้ qty บางหน้าใช้ quantity
+            const itemQty = item.quantity || item.qty || 0;
+            const itemPrice = item.price || 0;
+            const subTotal = itemPrice * itemQty;
+            total += subTotal;
 
-        document.getElementById('totalPrice').innerText = total + " Bath";
+            return `
+              <div class="flex justify-between items-center text-sm border-b border-[#7a4e2f]/10 pb-2">
+                <div>
+                  <span class="font-bold text-[#5e3b24]">${item.name}</span>
+                  <span class="opacity-60 text-xs ml-1">x${itemQty}</span>
+                </div>
+                <span class="font-mono font-bold">${subTotal} THB</span>
+              </div>
+            `;
+          }).join('');
+
+          totalDisplay.innerText = total + " Bath";
+        } else {
+          container.innerHTML = '<p class="text-center opacity-50 italic">Your cart is empty.</p>';
+          totalDisplay.innerText = "0 Bath";
+        }
+      } else {
+        console.log("No data found in localStorage for 'currentOrder'");
       }
+    }
+
+    // รันฟังก์ชันเมื่อโหลดหน้าเสร็จ
+    window.addEventListener('load', loadOrderData);
+</script>
     };
   </script>
 </body>
