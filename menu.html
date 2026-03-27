@@ -5,572 +5,180 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Chill n Fill – Food Menu</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--chill-cream);
-            font-family: system-ui, 'Segoe UI', 'Noto Sans Thai', 'Sukhumvit Set', 'Helvetica Neue', sans-serif;
-            color: var(--chill-brown-dark);
-            padding: 20px 16px 40px;
-        }
-
-        :root {
-            --chill-cream: #f6efe5;
-            --chill-cream-deep: #efe3d2;
-            --chill-card: #fff7ee;
-            --chill-brown: #7a4e2f;
-            --chill-brown-dark: #5e3b24;
-            --chill-accent: #b07a53;
-            --chill-border: #dcc9b4;
-            --chill-input: #fffaf5;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .shop-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--chill-border);
-        }
-        .shop-name {
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            color: var(--chill-brown-dark);
-        }
-        .shop-badge {
-            font-size: 0.8rem;
-            background: var(--chill-cream-deep);
-            padding: 4px 12px;
-            border-radius: 40px;
-            color: var(--chill-brown);
-            font-weight: 500;
-        }
-
-        .category-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 12px;
-            padding: 8px 0 16px;
-            margin-bottom: 12px;
-            scrollbar-width: thin;
-            -webkit-overflow-scrolling: touch;
-        }
-        .category-scroll::-webkit-scrollbar {
-            height: 4px;
-            background: var(--chill-border);
-            border-radius: 10px;
-        }
-        .category-scroll::-webkit-scrollbar-thumb {
-            background: var(--chill-accent);
-            border-radius: 10px;
-        }
-        .cat-btn {
-            background: var(--chill-card);
-            border: 1px solid var(--chill-border);
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
-            color: var(--chill-brown);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .cat-btn.active {
-            background: var(--chill-brown);
-            border-color: var(--chill-brown);
-            color: white;
-        }
-
-        .menu-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 6px;
-        }
-        .menu-card {
-            background: var(--chill-card);
-            border-radius: 28px;
-            border: 1px solid var(--chill-border);
-            padding: 16px 18px;
-            transition: 0.15s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }
-        .menu-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .menu-info h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--chill-brown-dark);
-        }
-        .menu-desc {
-            font-size: 0.75rem;
-            color: var(--chill-accent);
-            margin-top: 4px;
-        }
-        .price {
-            font-weight: 800;
-            font-size: 1.3rem;
-            color: var(--chill-brown);
-        }
-        .order-btn {
-            background: var(--chill-brown);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .order-btn:hover {
-            background: var(--chill-brown-dark);
-            transform: scale(0.96);
-        }
-
-        /* สำหรับปุ่ม +/- ในตะกร้า */
-        .qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: center;
-        }
-        .qty-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1px solid var(--chill-border);
-            background: white;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .options-panel {
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--chill-border);
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .options-panel.show {
-            display: flex;
-        }
-        .opt-group {
-            background: var(--chill-input);
-            padding: 10px 12px;
-            border-radius: 24px;
-        }
-        .opt-label {
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            display: block;
-            color: var(--chill-brown);
-        }
-        .opt-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .opt-choice {
-            background: white;
-            border: 1px solid var(--chill-border);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s;
-            color: var(--chill-brown-dark);
-        }
-        .opt-choice.selected {
-            background: var(--chill-accent);
-            border-color: var(--chill-accent);
-            color: white;
-        }
-        .confirm-options {
-            background: var(--chill-cream-deep);
-            border: none;
-            padding: 10px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: var(--chill-brown-dark);
-            cursor: pointer;
-            margin-top: 6px;
-        }
-
-        .cart-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--chill-card);
-            border-top: 2px solid var(--chill-border);
-            padding: 12px 20px;
-            backdrop-filter: blur(8px);
-            background-color: rgba(255, 247, 238, 0.96);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-        }
-        .cart-info {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-        .cart-total {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--chill-brown);
-        }
-        .view-cart-btn {
-            background: var(--chill-brown);
-            padding: 8px 24px;
-            border-radius: 60px;
-            color: white;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-card {
-            background: var(--chill-card);
-            max-width: 500px;
-            width: 90%;
-            border-radius: 36px;
-            padding: 24px 20px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--chill-border);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: var(--chill-brown-dark);
-        }
-        .cart-items-list {
-            margin: 12px 0;
-            max-height: 40vh;
-            overflow-y: auto;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--chill-border);
-        }
-        .toast-msg {
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            right: 20px;
-            background: var(--chill-brown-dark);
-            color: white;
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 500;
-            z-index: 150;
-            opacity: 0;
-            transition: 0.2s;
-            pointer-events: none;
-        }
-        .footer-space {
-            height: 80px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f6efe5; font-family: system-ui, sans-serif; color: #5e3b24; padding: 20px 16px 40px; }
+        :root { --chill-cream: #f6efe5; --chill-brown: #7a4e2f; --chill-brown-dark: #5e3b24; --chill-accent: #b07a53; --chill-border: #dcc9b4; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .shop-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--chill-border); }
+        .shop-name { font-size: 1.7rem; font-weight: 700; color: var(--chill-brown-dark); }
+        .shop-badge { font-size: 0.8rem; background: #efe3d2; padding: 4px 12px; border-radius: 40px; color: var(--chill-brown); font-weight: 500; }
+        .category-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 8px 0 16px; margin-bottom: 12px; }
+        .cat-btn { background: #fff7ee; border: 1px solid var(--chill-border); padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; color: var(--chill-brown); cursor: pointer; }
+        .cat-btn.active { background: var(--chill-brown); border-color: var(--chill-brown); color: white; }
+        .menu-grid { display: flex; flex-direction: column; gap: 16px; }
+        .menu-card { background: #fff7ee; border-radius: 28px; border: 1px solid var(--chill-border); padding: 16px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .menu-row { display: flex; justify-content: space-between; align-items: center; }
+        .price { font-weight: 800; font-size: 1.3rem; color: var(--chill-brown); }
+        .order-btn { background: var(--chill-brown); border: none; padding: 8px 20px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer; }
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 247, 238, 0.96); border-top: 2px solid var(--chill-border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .view-cart-btn { background: var(--chill-brown); padding: 8px 24px; border-radius: 60px; color: white; font-weight: bold; border: none; cursor: pointer; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+        .modal-card { background: #fff7ee; width: 90%; max-width: 500px; border-radius: 36px; padding: 24px 20px; max-height: 80vh; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--chill-border); }
+        .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--chill-border); background: white; cursor: pointer; }
+        .options-panel { margin-top: 10px; display: none; flex-direction: column; gap: 10px; padding: 10px; background: #fffaf5; border-radius: 15px; }
+        .options-panel.show { display: flex; }
+        .opt-choice { padding: 5px 12px; border: 1px solid var(--chill-border); border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-right: 5px; }
+        .opt-choice.selected { background: var(--chill-accent); color: white; border-color: var(--chill-accent); }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="shop-header">
-        <div>
-            <div class="shop-name">Chill n Fill</div>
-        </div>
+        <div class="shop-name">Chill n Fill</div>
         <div class="shop-badge">24h Delivery</div>
     </div>
-
     <div class="category-scroll" id="categoryBar">
         <button class="cat-btn active" data-cat="all">All</button>
         <button class="cat-btn" data-cat="Main Course">Main Course</button>
         <button class="cat-btn" data-cat="Soup">Soup</button>
         <button class="cat-btn" data-cat="Salad">Salad</button>
         <button class="cat-btn" data-cat="Drinks">Drinks</button>
-        <button class="cat-btn" data-cat="Dessert">Dessert</button>
     </div>
-
     <div id="menuGrid" class="menu-grid"></div>
-    <div class="footer-space"></div>
+    <div style="height: 80px;"></div>
 </div>
 
-<div class="cart-bar" id="cartBar">
-    <div class="cart-info">🛒 Cart: <span id="cartCount">0</span> items</div>
-    <div class="cart-total" id="cartTotalPrice">0 THB</div>
+<div class="cart-bar">
+    <div>🛒 Cart: <span id="cartCount">0</span></div>
+    <div id="cartTotalPrice" style="font-weight: 800;">0 THB</div>
     <button class="view-cart-btn" id="openCartModal">View Cart</button>
 </div>
 
 <div id="cartModal" class="modal">
     <div class="modal-card">
-        <div class="modal-header">
-            <span>Your Order</span>
-            <button class="close-modal" id="closeModalBtn" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-        </div>
-        <div id="cartItemsContainer" class="cart-items-list"></div>
-        <div class="cart-summary" style="text-align: right; font-weight: bold; padding: 10px 0; font-size: 1.2rem;">
-            Total: <span id="modalTotalPrice">0</span> THB
-        </div>
-        <div style="display: flex; gap: 12px; margin-top: 10px;">
-            <button id="clearCartBtn" style="background: #e0cfbe; border: none; padding: 12px; border-radius: 40px; flex:1; font-weight: bold;">Clear All</button>
-            <button id="fakeOrderBtn" style="background: var(--chill-brown); color:white; border: none; padding: 12px; border-radius: 40px; flex:1; font-weight: bold;">Place Order</button>
+        <h2 style="margin-bottom: 15px;">Your Order</h2>
+        <div id="cartItemsContainer"></div>
+        <div style="text-align: right; font-weight: 800; padding: 15px 0; font-size: 1.2rem;">Total: <span id="modalTotalPrice">0</span> THB</div>
+        <div style="display: flex; gap: 10px;">
+            <button id="closeModalBtn" style="flex: 1; padding: 12px; border-radius: 40px; border: 1px solid #7a4e2f;">Close</button>
+            <button id="fakeOrderBtn" style="flex: 2; padding: 12px; border-radius: 40px; background: #7a4e2f; color: white; border: none; font-weight: bold;">Place Order</button>
         </div>
     </div>
 </div>
 
-<div id="toastMsg" class="toast-msg">Added to cart!</div>
-
 <script>
     const menuDatabase = [
-        { id: 1, name: "Basil Stir-Fry", price: 65, category: "Main Course", desc: "Crispy chicken with basil and fried egg", hasOptions: true },
-        { id: 2, name: "Tom Yum Goong", price: 120, category: "Soup", desc: "Spicy and sour shrimp soup", hasOptions: true },
-        { id: 3, name: "Pad Thai", price: 70, category: "Main Course", desc: "Stir-fried rice noodles with shrimp", hasOptions: false },
-        { id: 4, name: "Chicken Rice", price: 60, category: "Main Course", desc: "Steamed chicken with seasoned rice", hasOptions: false },
-        { id: 5, name: "Som Tum (Papaya Salad)", price: 55, category: "Salad", desc: "Thai spicy papaya salad", hasOptions: true },
-        { id: 8, name: "Lime Juice", price: 25, category: "Drinks", desc: "Freshly squeezed lime juice", hasOptions: false },
-        { id: 9, name: "Iced Green Tea", price: 30, category: "Drinks", desc: "Premium iced green tea", hasOptions: false },
-        { id: 10, name: "Vanilla Ice Cream", price: 35, category: "Dessert", desc: "Smooth vanilla bean ice cream", hasOptions: false }
+        { id: 1, name: "Basil Stir-Fry", price: 65, category: "Main Course", desc: "Crispy chicken with basil and egg", hasOptions: true },
+        { id: 2, name: "Tom Yum Goong", price: 120, category: "Soup", desc: "Spicy shrimp soup", hasOptions: true },
+        { id: 3, name: "Pad Thai", price: 70, category: "Main Course", desc: "Thai noodles with shrimp", hasOptions: false },
+        { id: 4, name: "Chicken Rice", price: 60, category: "Main Course", desc: "Steamed chicken with rice", hasOptions: false },
+        { id: 5, name: "Som Tum", price: 55, category: "Salad", desc: "Spicy papaya salad", hasOptions: true },
+        { id: 8, name: "Lime Juice", price: 25, category: "Drinks", desc: "Fresh lime juice", hasOptions: false }
     ];
 
     let cart = [];
 
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        if (toast) {
-            toast.innerText = msg;
-            toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 1800);
-        }
+    function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('cartCount').innerText = totalItems;
+        document.getElementById('cartTotalPrice').innerText = totalPrice + " THB";
+        const container = document.getElementById('cartItemsContainer');
+        container.innerHTML = cart.length === 0 ? "Empty Cart" : cart.map(item => `
+            <div class="cart-item">
+                <div style="flex:2"><strong>${item.name}</strong><br><small>${item.optionsText}</small></div>
+                <div style="flex:1; display:flex; gap:10px; align-items:center;">
+                    <button class="qty-btn" onclick="changeQty('${item.cartId}', -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="qty-btn" onclick="changeQty('${item.cartId}', 1)">+</button>
+                </div>
+                <div style="flex:1; text-align:right;">${item.price * item.quantity}</div>
+            </div>
+        `).join('');
+        document.getElementById('modalTotalPrice').innerText = totalPrice;
     }
 
-    // ฟังก์ชันจัดการจำนวนสินค้า (บวก/ลบ) ในตะกร้า
-    function changeQuantity(cartId, delta) {
-        const item = cart.find(i => i.cartId === cartId);
+    function changeQty(id, delta) {
+        const item = cart.find(i => i.cartId === id);
         if (item) {
             item.quantity += delta;
-            if (item.quantity <= 0) {
-                cart = cart.filter(i => i.cartId !== cartId);
-            }
+            if (item.quantity <= 0) cart = cart.filter(i => i.cartId !== id);
             updateCartUI();
         }
     }
 
-    function updateCartUI() {
-        const cartCountSpan = document.getElementById('cartCount');
-        const cartTotalSpan = document.getElementById('cartTotalPrice');
-        
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        if (cartCountSpan) cartCountSpan.innerText = totalItems;
-        if (cartTotalSpan) cartTotalSpan.innerText = totalPrice + " THB";
-        
-        const modalContainer = document.getElementById('cartItemsContainer');
-        const modalTotalSpan = document.getElementById('modalTotalPrice');
-
-        if (modalContainer) {
-            if (cart.length === 0) {
-                modalContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#7a4e2f;">Your cart is empty</div>';
-            } else {
-                modalContainer.innerHTML = cart.map(item => `
-                    <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #dcc9b4;">
-                        <div style="flex: 2;">
-                            <strong>${item.name}</strong><br>
-                            <small style="color: #b07a53;">${item.optionsText}</small>
-                        </div>
-                        <div class="qty-controls" style="flex: 1; display: flex; align-items: center; gap: 10px; justify-content: center;">
-                            <button class="qty-btn" onclick="changeQuantity('${item.cartId}', -1)" style="width: 25px; height: 25px; border-radius: 50%; border: 1px solid #dcc9b4; cursor: pointer;">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="qty-btn" onclick="changeQuantity('${item.cartId}', 1)" style="width: 25px; height: 25px; border-radius: 50%; border: 1px solid #dcc9b4; cursor: pointer;">+</button>
-                        </div>
-                        <div style="flex: 1; text-align: right; font-weight: bold;">${item.price * item.quantity} THB</div>
-                    </div>
-                `).join('');
-            }
-        }
-        if (modalTotalSpan) modalTotalSpan.innerText = totalPrice;
-    }
-
-    function addToCart(menuItem, selectedOptions = null) {
-        const optionsText = selectedOptions ? `Spiciness: ${selectedOptions.spicy}` : "Standard";
-        const cartId = `${menuItem.id}-${optionsText}`;
-        const existingItem = cart.find(i => i.cartId === cartId);
-
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({
-                cartId: cartId,
-                id: menuItem.id,
-                name: menuItem.name,
-                price: menuItem.price,
-                optionsText: optionsText,
-                quantity: 1
-            });
-        }
+    function addToCart(menuItem, spicy = "Medium") {
+        const optText = menuItem.hasOptions ? "Spiciness: " + spicy : "Standard";
+        const cartId = `${menuItem.id}-${optText}`;
+        const existing = cart.find(i => i.cartId === cartId);
+        if (existing) existing.quantity += 1;
+        else cart.push({ cartId, name: menuItem.name, price: menuItem.price, optionsText: optText, quantity: 1 });
         updateCartUI();
-        showToast(`Added ${menuItem.name} to cart!`);
     }
 
-    function showOptionsForMenu(menuItem, cardElement) {
-        document.querySelectorAll('.options-panel').forEach(panel => panel.classList.remove('show'));
-        let targetPanel = cardElement.querySelector('.options-panel');
-        if (!targetPanel) {
-            targetPanel = document.createElement('div');
-            targetPanel.classList.add('options-panel');
-            targetPanel.innerHTML = `
-                <div class="opt-group" style="background: #fffaf5; padding: 10px; border-radius: 10px; margin-top: 10px;">
-                    <span class="opt-label" style="font-weight: bold; font-size: 0.8rem; display: block; margin-bottom: 5px;">🌶️ Spiciness Level</span>
-                    <div class="opt-buttons" style="display: flex; gap: 5px;">
-                        <span class="opt-choice" data-spicy="Non-Spicy" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">None</span>
-                        <span class="opt-choice" data-spicy="Mild" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Mild</span>
-                        <span class="opt-choice selected" data-spicy="Medium" style="padding: 5px 10px; background: #b07a53; color: white; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Medium</span>
-                        <span class="opt-choice" data-spicy="Hot" style="padding: 5px 10px; border: 1px solid #dcc9b4; border-radius: 20px; font-size: 0.7rem; cursor: pointer;">Hot</span>
-                    </div>
+    function showOptions(menuItem, card) {
+        let panel = card.querySelector('.options-panel');
+        if(!panel) {
+            panel = document.createElement('div');
+            panel.className = 'options-panel';
+            panel.innerHTML = `
+                <span style="font-size:0.8rem; font-weight:bold;">🌶️ Select Spicy Level</span>
+                <div style="display:flex;">
+                    <span class="opt-choice" data-v="Mild">Mild</span>
+                    <span class="opt-choice selected" data-v="Medium">Medium</span>
+                    <span class="opt-choice" data-v="Hot">Hot</span>
                 </div>
-                <button class="confirm-options" style="width: 100%; margin-top: 10px; padding: 8px; background: #efe3d2; border: none; border-radius: 20px; font-weight: bold; cursor: pointer;">Confirm + Add to Cart</button>
+                <button onclick="confirmAndAdd(${menuItem.id}, this)" style="background:#7a4e2f; color:white; border:none; padding:5px; border-radius:10px; margin-top:5px; cursor:pointer;">Add to Cart</button>
             `;
-            cardElement.appendChild(targetPanel);
-        }
-        targetPanel.classList.add('show');
-        
-        const spicyBtns = targetPanel.querySelectorAll('.opt-choice');
-        spicyBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                spicyBtns.forEach(b => {
-                    b.classList.remove('selected');
-                    b.style.background = 'white';
-                    b.style.color = '#5e3b24';
-                });
+            card.appendChild(panel);
+            panel.querySelectorAll('.opt-choice').forEach(btn => btn.onclick = () => {
+                panel.querySelectorAll('.opt-choice').forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
-                btn.style.background = '#b07a53';
-                btn.style.color = 'white';
             });
-        });
-        
-        targetPanel.querySelector('.confirm-options').onclick = () => {
-            const finalSpicy = targetPanel.querySelector('.opt-choice.selected').getAttribute('data-spicy');
-            addToCart(menuItem, { spicy: finalSpicy });
-            targetPanel.classList.remove('show');
-        };
+        }
+        panel.classList.toggle('show');
     }
 
-    function renderMenu(category = "all") {
+    window.confirmAndAdd = (id, btn) => {
+        const m = menuDatabase.find(x => x.id === id);
+        const s = btn.parentElement.querySelector('.selected').dataset.v;
+        addToCart(m, s);
+        btn.parentElement.classList.remove('show');
+    };
+
+    function renderMenu(cat = "all") {
         const grid = document.getElementById('menuGrid');
-        if (!grid) return;
-        const filtered = category === "all" ? menuDatabase : menuDatabase.filter(m => m.category === category);
         grid.innerHTML = "";
-        filtered.forEach(menu => {
+        const filtered = cat === "all" ? menuDatabase : menuDatabase.filter(m => m.category === cat);
+        filtered.forEach(m => {
             const card = document.createElement('div');
             card.className = 'menu-card';
-            card.style.background = '#fff7ee';
-            card.style.padding = '15px';
-            card.style.borderRadius = '20px';
-            card.style.border = '1px solid #dcc9b4';
             card.innerHTML = `
-                <div class="menu-row" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div class="menu-info">
-                        <h3 style="margin: 0; color: #5e3b24;">${menu.name}</h3>
-                        <div class="menu-desc" style="font-size: 0.7rem; color: #b07a53;">${menu.desc}</div>
-                    </div>
-                    <div class="price" style="font-weight: bold; color: #7a4e2f;">${menu.price} THB</div>
-                    <button class="order-btn" style="padding: 8px 15px; background: #7a4e2f; color: white; border: none; border-radius: 20px; cursor: pointer;">Order Now</button>
+                <div class="menu-row">
+                    <div><h3>${m.name}</h3><small style="color:#b07a53;">${m.desc}</small></div>
+                    <div class="price">${m.price}</div>
+                    <button class="order-btn" onclick='handleOrderClick(${JSON.stringify(m)}, this)'>Order</button>
                 </div>
             `;
             grid.appendChild(card);
-            card.querySelector('.order-btn').onclick = () => {
-                if(menu.hasOptions) showOptionsForMenu(menu, card);
-                else addToCart(menu);
-            };
         });
     }
 
-    const modal = document.getElementById('cartModal');
-    const openCartBtn = document.getElementById('openCartModal');
-    const closeBtn = document.getElementById('closeModalBtn');
-
-    if (openCartBtn) openCartBtn.onclick = () => { modal.style.display = 'flex'; updateCartUI(); };
-    if (closeBtn) closeBtn.onclick = () => { modal.style.display = 'none'; };
-    window.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
-
-    const clearBtn = document.getElementById('clearCartBtn');
-    if (clearBtn) clearBtn.onclick = () => {
-        cart = [];
-        updateCartUI();
-        showToast("Cart cleared!");
+    window.handleOrderClick = (m, btn) => {
+        if(m.hasOptions) showOptions(m, btn.closest('.menu-card'));
+        else addToCart(m);
     };
 
-    // ปุ่ม Confirm Order (Place Order) เพื่อเด้งไปหน้า Status
-   const fakeOrderBtn = document.getElementById('fakeOrderBtn');
-if (fakeOrderBtn) {
-    fakeOrderBtn.onclick = () => {
-        if (cart.length === 0) return showToast("Please add items first!");
-        
-        // บันทึกข้อมูลลงเครื่องเพื่อให้หน้า status รับไปโชว์ได้
+    document.getElementById('openCartModal').onclick = () => document.getElementById('cartModal').style.display='flex';
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('cartModal').style.display='none';
+    document.getElementById('fakeOrderBtn').onclick = () => {
+        if(cart.length === 0) return alert("Please add items!");
         localStorage.setItem('currentOrder', JSON.stringify(cart));
-        
-        // เด้งไปหน้าสถานะ (เช็กชื่อไฟล์น้องนะ ถ้าชื่อ customer.html ก็แก้ตรงนี้ด้วยค่ะ)
-        window.location.href = "status.html"; 
+        window.location.href = "status.html";
     };
-}
 
-    const catBtns = document.querySelectorAll('.cat-btn');
-    catBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            catBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderMenu(btn.getAttribute('data-cat'));
-        });
-    });
-
-    renderMenu("all");
+    renderMenu();
 </script>
 </body>
 </html>
