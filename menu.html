@@ -362,17 +362,16 @@
         <div>
             <div class="shop-name">Chill n Fill</div>
         </div>
-        <div class="shop-badge">เดลิเวอรี่ 24h</div>
+        <div class="shop-badge">24h Delivery</div>
     </div>
 
     <div class="category-scroll" id="categoryBar">
-        <button class="cat-btn active" data-cat="all">ทั้งหมด</button>
-        <button class="cat-btn" data-cat="จานเดียว">จานเดียว</button>
-        <button class="cat-btn" data-cat="ต้มยำ">ต้มยำ</button>
-        <button class="cat-btn" data-cat="สลัด">สลัด</button>
-        <button class="cat-btn" data-cat="จานหลัก">จานหลัก</button>
-        <button class="cat-btn" data-cat="เครื่องดื่ม">เครื่องดื่ม</button>
-        <button class="cat-btn" data-cat="ของหวาน">ของหวาน</button>
+        <button class="cat-btn active" data-cat="all">All</button>
+        <button class="cat-btn" data-cat="Main Course">Main Course</button>
+        <button class="cat-btn" data-cat="Soup">Soup</button>
+        <button class="cat-btn" data-cat="Salad">Salad</button>
+        <button class="cat-btn" data-cat="Drinks">Drinks</button>
+        <button class="cat-btn" data-cat="Dessert">Dessert</button>
     </div>
 
     <div id="menuGrid" class="menu-grid"></div>
@@ -380,111 +379,101 @@
 </div>
 
 <div class="cart-bar" id="cartBar">
-    <div class="cart-info">🛒 สั่งอาหาร <span id="cartCount">0</span> รายการ</div>
-    <div class="cart-total" id="cartTotalPrice">0 บาท</div>
-    <button class="view-cart-btn" id="openCartModal">ดูตะกร้า</button>
+    <div class="cart-info">🛒 Cart: <span id="cartCount">0</span> items</div>
+    <div class="cart-total" id="cartTotalPrice">0 THB</div>
+    <button class="view-cart-btn" id="openCartModal">View Cart</button>
 </div>
 
 <div id="cartModal" class="modal">
     <div class="modal-card">
         <div class="modal-header">
-            <span>รายการที่สั่งแล้ว</span>
+            <span>Your Order</span>
             <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
         <div id="cartItemsContainer" class="cart-items-list"></div>
-        <div class="cart-summary" style="text-align: right; font-weight: bold; padding: 8px 0;">
-            รวม <span id="modalTotalPrice">0</span> บาท
+        <div class="cart-summary" style="text-align: right; font-weight: bold; padding: 10px 0; font-size: 1.2rem;">
+            Total: <span id="modalTotalPrice">0</span> THB
         </div>
         <div style="display: flex; gap: 12px; margin-top: 10px;">
-            <button id="clearCartBtn" style="background: #e0cfbe; border: none; padding: 8px; border-radius: 40px; flex:1;">ยกเลิกทั้งหมด</button>
-            <button id="fakeOrderBtn" style="background: var(--chill-brown); color:white; border: none; padding: 8px; border-radius: 40px; flex:1;">สั่งอาหาร</button>
-        </div>
-
-        <div class="review-section" id="reviewSection" style="display: none;">
-            <div class="review-title">⭐ รีวิวอาหาร ⭐</div>
-            <div class="review-stars" id="starRating">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
-            </div>
-            <textarea class="review-textarea" rows="2" placeholder="บอกเล่าประสบการณ์... (เช่น รสชาติเผ็ดกำลังดี, แซ่บมาก)"></textarea>
-            <button class="submit-review" id="submitReviewBtn">ส่งรีวิว</button>
+            <button id="clearCartBtn" style="background: #e0cfbe; border: none; padding: 12px; border-radius: 40px; flex:1; font-weight: bold;">Clear All</button>
+            <button id="fakeOrderBtn" style="background: var(--chill-brown); color:white; border: none; padding: 12px; border-radius: 40px; flex:1; font-weight: bold;">Place Order</button>
         </div>
     </div>
 </div>
 
-<div id="toastMsg" class="toast-msg">เพิ่มลงตะกร้าแล้ว</div>
+<div id="toastMsg" class="toast-msg">Added to cart!</div>
 
 <script>
-    // ======================= เมนูอาหาร (อัพเดทตามข้อมูลตัวอย่าง) ====================
+    // เปลี่ยนข้อมูลเมนูเป็นภาษาอังกฤษ
     const menuDatabase = [
-        { id: 1, name: "ข้าวผัดกระเพรา", price: 65, category: "จานเดียว", desc: "ข้าวผัดกระเพราไก่กรอบ ไข่ดาว", hasOptions: true, hasSpicyOption: true },
-        { id: 2, name: "ต้มยำกุ้ง", price: 120, category: "ต้มยำ", desc: "ต้มยำกุ้งน้ำใส รสจัดจ้าน", hasOptions: true, hasSpicyOption: true },
-        { id: 3, name: "ผัดไทย", price: 70, category: "จานเดียว", desc: "ผัดไทยกุ้งสด เส้นเหนียวนุ่ม", hasOptions: false },
-        { id: 4, name: "ข้าวมันไก่", price: 60, category: "จานเดียว", desc: "ข้าวมันไก่ต้ม น้ำจิ้มสูตรพิเศษ", hasOptions: false },
-        { id: 5, name: "ส้มตำไทย", price: 55, category: "สลัด", desc: "ส้มตำไทยรสแซ่บ มะละกอกรอบ", hasOptions: true, hasSpicyOption: true },
-        { id: 6, name: "เนื้อย่างเกาหลี", price: 180, category: "จานหลัก", desc: "เนื้อหมักสูตรเกาหลี ย่างหอมกรุ่น", hasOptions: false },
-        { id: 7, name: "กระเพราเนื้อ", price: 85, category: "จานเดียว", desc: "กระเพราเนื้อสับ ไข่ดาว", hasOptions: true, hasSpicyOption: true },
-        { id: 8, name: "น้ำมะนาว", price: 25, category: "เครื่องดื่ม", desc: "น้ำมะนาวคั้นสด", hasOptions: false },
-        { id: 9, name: "ชาเขียว", price: 30, category: "เครื่องดื่ม", desc: "ชาเขียวเย็น", hasOptions: false },
-        { id: 10, name: "ไอศครีม", price: 35, category: "ของหวาน", desc: "ไอศครีมวานิลลา", hasOptions: false },
-        { id: 11, name: "ข้าวกระเพราหมูกรอบ", price: 70, category: "จานเดียว", desc: "หมูกรอบฟูกรอบ กระเพรากรอบ", hasOptions: true, hasSpicyOption: true },
-        { id: 12, name: "ต้มยำทะเล", price: 150, category: "ต้มยำ", desc: "ต้มยำรวมมิตรทะเล", hasOptions: true, hasSpicyOption: true },
-        { id: 13, name: "น้ำอัดลม", price: 20, category: "เครื่องดื่ม", desc: "โซดา โค้ก สไปท์", hasOptions: false }
+        { id: 1, name: "Basil Stir-Fry", price: 65, category: "Main Course", desc: "Crispy chicken with basil and fried egg", hasOptions: true },
+        { id: 2, name: "Tom Yum Goong", price: 120, category: "Soup", desc: "Spicy and sour shrimp soup", hasOptions: true },
+        { id: 3, name: "Pad Thai", price: 70, category: "Main Course", desc: "Stir-fried rice noodles with shrimp", hasOptions: false },
+        { id: 4, name: "Chicken Rice", price: 60, category: "Main Course", desc: "Steamed chicken with seasoned rice", hasOptions: false },
+        { id: 5, name: "Som Tum (Papaya Salad)", price: 55, category: "Salad", desc: "Thai spicy papaya salad", hasOptions: true },
+        { id: 8, name: "Lime Juice", price: 25, category: "Drinks", desc: "Freshly squeezed lime juice", hasOptions: false },
+        { id: 9, name: "Iced Green Tea", price: 30, category: "Drinks", desc: "Premium iced green tea", hasOptions: false },
+        { id: 10, name: "Vanilla Ice Cream", price: 35, category: "Dessert", desc: "Smooth vanilla bean ice cream", hasOptions: false }
     ];
 
     let cart = [];
 
-    function showToast(msg) {
-        const toast = document.getElementById('toastMsg');
-        toast.innerText = msg;
-        toast.style.opacity = '1';
-        setTimeout(() => {
-            toast.style.opacity = '0';
-        }, 1800);
+    function updateCartUI() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        document.getElementById('cartCount').innerText = totalItems;
+        document.getElementById('cartTotalPrice').innerText = totalPrice + " THB";
+        
+        const container = document.getElementById('cartItemsContainer');
+        if(cart.length === 0) {
+            container.innerHTML = '<div class="empty-cart-msg">Your cart is empty</div>';
+        } else {
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0;">
+                    <div style="flex: 2;">
+                        <strong>${item.name}</strong><br>
+                        <small style="color: #b07a53;">${item.optionsText}</small>
+                    </div>
+                    <div style="flex: 1; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                        <button class="qty-btn" onclick="changeQuantity('${item.cartId}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="qty-btn" onclick="changeQuantity('${item.cartId}', 1)">+</button>
+                    </div>
+                    <div style="flex: 1; text-align: right; font-weight: bold;">${item.price * item.quantity} THB</div>
+                </div>
+            `).join('');
+        }
+        document.getElementById('modalTotalPrice').innerText = totalPrice;
     }
 
-    function updateCartUI() {
-        const cartCountSpan = document.getElementById('cartCount');
-        const cartTotalSpan = document.getElementById('cartTotalPrice');
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        cartCountSpan.innerText = cart.length;
-        cartTotalSpan.innerText = total + " บาท";
-        
-        const modalContainer = document.getElementById('cartItemsContainer');
-        const modalTotalSpan = document.getElementById('modalTotalPrice');
-        if(modalContainer) {
-            if(cart.length === 0) {
-                modalContainer.innerHTML = '<div class="empty-cart-msg">🛒 ยังไม่มีรายการอาหาร กรุณาเพิ่มเมนู</div>';
-            } else {
-                modalContainer.innerHTML = cart.map((item, idx) => `
-                    <div class="cart-item">
-                        <div><strong>${item.name}</strong><br><span style="font-size: 0.7rem; color:#b07a53;">${item.optionsText || ''}</span></div>
-                        <div>${item.price} บาท</div>
-                    </div>
-                `).join('');
-            }
-            modalTotalSpan.innerText = total + " บาท";
+    function changeQuantity(cartId, delta) {
+        const item = cart.find(i => i.cartId === cartId);
+        if (item) {
+            item.quantity += delta;
+            if (item.quantity <= 0) cart = cart.filter(i => i.cartId !== cartId);
+            updateCartUI();
         }
     }
 
     function addToCart(menuItem, selectedOptions = null) {
-        let optionsDisplay = "";
-        if(menuItem.hasOptions && selectedOptions) {
-            const spicyDesc = selectedOptions.spicy ? `🌶️ ระดับเผ็ด: ${selectedOptions.spicy}` : "";
-            optionsDisplay = spicyDesc;
+        const optionsText = selectedOptions ? `Spiciness: ${selectedOptions.spicy}` : "Standard";
+        const cartId = `${menuItem.id}-${optionsText}`;
+        const existingItem = cart.find(i => i.cartId === cartId);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                cartId: cartId,
+                name: menuItem.name,
+                price: menuItem.price,
+                optionsText: optionsText,
+                quantity: 1
+            });
         }
-        cart.push({
-            id: menuItem.id,
-            name: menuItem.name,
-            price: menuItem.price,
-            optionsText: optionsDisplay || "มาตรฐาน",
-            timestamp: Date.now()
-        });
         updateCartUI();
-        showToast(`✅ เพิ่ม ${menuItem.name} แล้ว`);
+        showToast(`Added ${menuItem.name} to cart!`);
     }
 
     function showOptionsForMenu(menuItem, cardElement) {
